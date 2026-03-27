@@ -31,13 +31,18 @@ def run_pipeline(
     
     # 1. 初始化流水线
     print("\n[1/4] 初始化模块...")
+
+    # 优先使用 Badminton-Analysis 的专用羽毛球模型；不存在时回退通用模型
+    shuttle_model_path = Path("/Users/William/.openclaw/workspace/Badminton-Analysis/train/shuttle_output/models/weights/best.pt")
+    shuttle_model = str(shuttle_model_path) if shuttle_model_path.exists() else "yolo11n.pt"
+
     pipeline = IntegratedPipeline(
         player_model="yolo11n.pt",
-        shuttle_model="yolo11n.pt", 
+        shuttle_model=shuttle_model,
         pose_model="yolo11n-pose.pt"
     )
     print("  ✓ 球员追踪器")
-    print("  ✓ 羽毛球追踪器")
+    print(f"  ✓ 羽毛球追踪器 ({Path(shuttle_model).name})")
     print("  ✓ 骨架检测器")
     
     # 2. 处理视频
@@ -70,28 +75,29 @@ def run_pipeline(
 
 def _generate_visualization(pipeline, video_path: str, frame_data, output_path: Path):
     """生成可视化视频"""
-    
+
     with VideoReader(video_path) as reader:
         output_video = str(output_path / "output.mp4")
-        
+
         with VideoWriter(
             output_video,
             fps=reader.fps,
             frame_size=(reader.width, reader.height)
         ) as writer:
-            import numpy as np
-            
-            for i, fd in enumerate(frame_data[:100]):  # 只可视化前100帧
+            # 导出更多帧，避免 GIF 太短
+            max_vis_frames = min(len(frame_data), 600)
+
+            for i, fd in enumerate(frame_data[:max_vis_frames]):
                 frame = reader.read_frame(fd.frame_idx)
                 if frame is None:
                     continue
-                    
+
                 frame = pipeline.visualize_frame(frame, fd)
                 writer.write(frame)
-                
-                if i % 20 == 0:
+
+                if i % 50 == 0:
                     print(f"  已可视化 {i} 帧")
-    
+
     print(f"  ✓ 可视化已保存: {output_video}")
 
 

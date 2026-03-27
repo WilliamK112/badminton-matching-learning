@@ -32,3 +32,9 @@ models/
 # Logs
 *.log
 autopilot_log.md
+
+# Local artifacts / debug outputs
+.trash/
+output_*/
+reports/
+demo/gif/palette*.png

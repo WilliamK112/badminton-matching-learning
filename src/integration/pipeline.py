@@ -172,22 +172,35 @@ class IntegratedPipeline:
     
     def visualize_frame(self, frame: np.ndarray, frame_data: FrameData) -> np.ndarray:
         """可视化单帧"""
-        # 绘制球员框
+        # 绘制球员框 + 标签（框上方）
         for track_id, info in frame_data.players.items():
             bbox = info['bbox']
             x1, y1, x2, y2 = map(int, bbox)
-            color = (0, 255, 0) if track_id == 1 else (255, 0, 0)
+            color = (255, 0, 255) if int(track_id) == 1 else (255, 120, 0)
+            label = f"Player {int(track_id)}"
+
             cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-            
+
+            # 标签放在框上方
+            tx, ty = x1, max(24, y1 - 10)
+            cv2.putText(frame, label, (tx, ty), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 4)
+            cv2.putText(frame, label, (tx, ty), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+
             # 绘制骨架
             if 'keypoints' in info:
                 frame = self.pose_visualizer.draw_skeleton(frame, info['keypoints'])
-        
-        # 绘制羽毛球
+
+        # 绘制羽毛球 + 标签（点上方）
         if frame_data.shuttle:
             cx, cy = map(int, frame_data.shuttle)
-            cv2.circle(frame, (cx, cy), 8, (0, 0, 255), -1)
-        
+            cv2.circle(frame, (cx, cy), 8, (0, 255, 0), -1)
+            cv2.rectangle(frame, (cx - 11, cy - 11), (cx + 11, cy + 11), (0, 255, 0), 2)
+
+            s_label = "SHUTTLE"
+            stx, sty = cx - 10, max(24, cy - 18)
+            cv2.putText(frame, s_label, (stx, sty), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 4)
+            cv2.putText(frame, s_label, (stx, sty), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+
         return frame
     
     def save(self, path: str):

@@ -1,4 +1,4 @@
-# Badminton AI Tracking & Analysis
+# Badminton Tracking & Analysis
 
 A practical badminton video analysis pipeline focused on **stable 2-player tracking + shuttle tracking + pose visualization**.
 

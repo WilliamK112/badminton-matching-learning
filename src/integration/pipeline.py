@@ -171,42 +171,24 @@ class IntegratedPipeline:
                         rally_start = frame_data.frame_idx
     
     def visualize_frame(self, frame: np.ndarray, frame_data: FrameData) -> np.ndarray:
-        """可视化单帧"""
-        # 绘制球员框 + 标签（框上方）
+        """可视化单帧（无文字标签）"""
+        # 绘制球员框（无标签）
         for track_id, info in frame_data.players.items():
             bbox = info['bbox']
             x1, y1, x2, y2 = map(int, bbox)
             color = (255, 0, 255) if int(track_id) == 1 else (255, 120, 0)
-            label = f"Player {int(track_id)}"
-
             cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-
-            # 标签放在框上方
-            tx, ty = x1, max(24, y1 - 10)
-            cv2.putText(frame, label, (tx, ty), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 4)
-            cv2.putText(frame, label, (tx, ty), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
             # 绘制骨架
             if 'keypoints' in info:
                 frame = self.pose_visualizer.draw_skeleton(frame, info['keypoints'])
 
-        # 绘制羽毛球 + 标签（点上方）
+        # 绘制羽毛球（无标签）
         if frame_data.shuttle:
             cx, cy = map(int, frame_data.shuttle)
             h, w = frame.shape[:2]
             cv2.circle(frame, (cx, cy), 8, (0, 255, 0), -1)
             cv2.rectangle(frame, (cx - 11, cy - 11), (cx + 11, cy + 11), (0, 255, 0), 2)
-
-            s_label = "SHUTTLE"
-            (tw, th), _ = cv2.getTextSize(s_label, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)
-            # 默认放在点上方偏右；若会出界则改到左侧
-            stx = cx + 12
-            if stx + tw > w - 4:
-                stx = max(4, cx - tw - 12)
-            sty = max(th + 4, cy - 14)
-
-            cv2.putText(frame, s_label, (stx, sty), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 4)
-            cv2.putText(frame, s_label, (stx, sty), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
         return frame
     

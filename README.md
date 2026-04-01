@@ -51,17 +51,17 @@ A practical badminton video analysis pipeline focused on **stable 2-player track
 
 > The 3D court bounding box reconstructed from a single camera view — player + shuttle trajectories projected into world (X, Y, Z) space.
 
-**3D scatter — court space (X, Y, Z):**
+**3D box summary (v11b — latest):**
 
-| 3D Court Scatter |
+| 3D Court Box Summary |
 |----------|
-| <img src="./demo/box_3d/view_3d_scatter.png" alt="3D court scatter" width="800"/> |
+| <img src="./demo/box_3d/v5_3d_summary.png" alt="3D court box summary" width="800"/> |
 
-**3D skeleton replay video:**
+**3D skeleton replay (v11b — latest):**
 
 | 3D Skeleton Replay |
 |----------|
-| <video src="./demo/box_3d/replay_3d_skeleton.mp4" width="800" controls/> |
+| <img src="./demo/box_3d/v5_3d_replay.gif" alt="3D skeleton replay" width="800"/> |
 
 ## About
 

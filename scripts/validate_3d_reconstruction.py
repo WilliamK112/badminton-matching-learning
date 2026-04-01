@@ -47,21 +47,6 @@ def world_to_image(wx, wy, wz=0.0):
     u = PPX + FOCAL * (wx - CAM_X) / depth
     v = PPY + FOCAL * (CAM_Z - wz) / depth
     return u, v
-    """Draw 2D keypoints + limbs."""
-    kp_dict = {i: k for i, k in enumerate(kps_2d) if isinstance(k, list) and len(k) >= 3}
-    for i1, i2 in COCO_LIMBS:
-        if i1 not in kp_dict or i2 not in kp_dict:
-            continue
-        x1, y1, c1 = kp_dict[i1]; x2, y2, c2 = kp_dict[i2]
-        if c1 < conf_thresh or c2 < conf_thresh:
-            continue
-        cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color_bgr, 2, cv2.LINE_AA)
-    for i, (x, y, c) in kp_dict.items():
-        if c < conf_thresh:
-            continue
-        r = 5 if i in (0, 5, 6, 11, 12) else 3
-        cv2.circle(img, (int(x), int(y)), r, color_bgr, -1, cv2.LINE_AA)
-        cv2.circle(img, (int(x), int(y)), r+1, (255, 255, 255), 1, cv2.LINE_AA)
 
 
 def draw_skeleton(img, kps_2d, color_bgr, conf_thresh=0.25):
